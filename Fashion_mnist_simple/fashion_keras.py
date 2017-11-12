@@ -1,7 +1,8 @@
 import numpy as np
 import pandas as pd
 from keras.layers import Input, Dense, Flatten, Conv2D, Activation
-from keras.layers import BatchNormalization, MaxPooling2D
+from keras.layers import MaxPooling2D
+from keras.layers.normalization import BatchNormalization
 from keras.models import Model
 from keras.optimizers import Adam
 from keras import backend as K
@@ -20,20 +21,22 @@ class block_builder(object):
 
 	def __call__(self, input_tensor, block_index):
 		if self.b_type == 1:
+			tensor = BatchNormalization(name = 'bn'+str(block_index))(input_tensor)
 			tensor = Conv2D(self.nr_channels, kernel_size=(self.k, self.k),
-							strides = self.s, padding = 'same', name = 'conv' + str(block_index))(input_tensor)
-			tensor = BatchNormalization(axis = 3, name = 'bn'+str(block_index))(tensor)
-			tensor = Activation('relu')(tensor)
+							strides = self.s, padding = self.p, name = 'conv' + str(block_index))(tensor)
+			tensor = MaxPooling2D(pool_size=(2, 2), strides=(2,2), padding='valid')(tensor)
 			return tensor
 		elif self.b_type == 2:
 			tensor = Conv2D(self.nr_channels, kernel_size=(self.k, self.k),
 							strides = self.s, padding = self.p, name = 'conv' + str(block_index))(input_tensor)
-			tensor = MaxPooling2D(pool_size=(2, 2), strides=(1,1), padding='valid')(tensor)
+			tensor = MaxPooling2D(pool_size=(2, 2), strides=(2,2), padding='valid')(tensor)
+			tensor = Activation('relu')(tensor)
 			return tensor
 		else:
 			tensor = Conv2D(self.nr_channels, kernel_size=(self.k, self.k),
 							strides = self.s, padding = self.p, name = 'conv' + str(block_index))(input_tensor)
 			tensor = Activation('relu')(tensor)
+			return tensor
 
 def load_fashion_mnist():
 	from keras.datasets import fashion_mnist
@@ -53,18 +56,21 @@ def define_model(input_shape, output_class):
 	"""
 	model_input = Input(shape = input_shape)
 
-	block_type1 = block_builder(32, 3, 1, 'valid', 1)
-	block_type2 = block_builder(64, 5, 2,'valid', 2)
+	block_type1 = block_builder(32, 5, 1, 'same', 1)
+	#block_type2 = block_builder(64, 3, 2, 'same', 2)
+	block_type3 = block_builder(128, 3, 2,'valid', 2)
 
 	block = block_type1(model_input, 1)
-	block = block_type1(block, 2)
-	block = block_type2(block, 3)
-	block = block_type2(block, 4)
+	#block = MaxPooling2D(pool_size=(2,2), strides=(2,2))(block)
+	#block = block_type2(block, 2)
+	block = block_type3(block, 3)
+	#block = MaxPooling2D(pool_size=(2,2), strides=(2,2))(block)
 
 	block = Flatten()(block)
-	block = Dense(1024, activation='relu')(block)
 	block = Dense(128, activation='relu')(block)
-	model_output = Dense(output_class, activation='softmax')(block)
+	block = Dense(32, activation='relu')(block)
+	model_output = Dense(10, activation='softmax')(block)
+	#model_output = Dense(output_class, activation='softmax')(block)
 
 	model =  Model(inputs=model_input, outputs=model_output)
 	return model
@@ -96,9 +102,9 @@ if __name__ == "__main__":
 	"""
 
 	parser = argparse.ArgumentParser(description='Arguments for fashin mnist with CNNs')
-	parser.add_argument('--batch_size', default=200, type=int, help='Number of examples to be learnet at once..')
+	parser.add_argument('--batch_size', default=512, type=int, help='Number of examples to be learnet at once..')
 	parser.add_argument('--epochs', default=10, type=int, help='Number of full pass upon one complete test set, use 100 if training on GPU')
-	parser.add_argument('--learning_rate', default=0.005, type=float, help='Learning rate, use lesser than 0.01 always')
+	parser.add_argument('--learning_rate', default=0.001, type=float, help='Learning rate, use lesser than 0.01 always')
 	parser.add_argument('--is_training', default=1, type=int, help='If not training, forward pass is done on saved model')
 	args = parser.parse_args()
 	print(args)
