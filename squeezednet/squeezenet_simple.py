@@ -15,12 +15,23 @@ from keras import backend as K
 import Utility
 import Image_loader
 import os
+import h5py
 
 def main():
     args = Utility.argument_parser()
     os.chdir('../../Dataset/tiny-imagenet-200/')
     data_path = os.getcwd()
-    (x_train, y_train), (x_test, y_test) = Image_loader.load_data_external("tiny_imagenet", data_path)
+    if os.path.isfile("tiny_imagenet.h5"):
+        print("File found, loading")
+        data_file = h5py.File('tiny_imagenet.h5', 'r')
+        group_data = data_file.get('tiny_imagenet_group')
+        x_train = np.array(group_data.get('x_train'))
+        y_train = np.array(group_data.get('y_train'))
+        x_test = np.array(group_data.get('x_test'))
+        y_test = np.array(group_data.get('y_test'))
+        data_file.close()
+    else:
+        (x_train, y_train), (x_test, y_test) = Image_loader.load_data_external("tiny_imagenet", data_path)
     print(x_train.shape)
     print(y_train.shape)
     print(x_test.shape)

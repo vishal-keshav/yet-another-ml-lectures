@@ -7,6 +7,8 @@ from keras.utils import to_categorical
 from PIL import Image
 import numpy as np
 import os
+from tqdm import tqdm
+import h5py
 
 def load_data_simple(dataset_name):
     if dataset_name == 'mnist':
@@ -54,7 +56,7 @@ def load_data_external(dataset_name, path):
     image_index = 0
     class_index = 0
     label_map = {}
-    for class_folder in os.listdir(train_path):
+    for class_folder in tqdm(os.listdir(train_path)):
         class_image_dir = os.path.join(os.path.join(train_path, class_folder), 'images')
         label_map[class_folder] = class_index
         for image_file in os.listdir(class_image_dir):
@@ -69,8 +71,6 @@ def load_data_external(dataset_name, path):
             x_train[image_index] = image_array
             y_train[image_index] = class_index
             image_index = image_index + 1
-            if image_index%50 == 0:
-                break
         class_index = class_index + 1
         if class_index >= 200:
             break
@@ -86,7 +86,7 @@ def load_data_external(dataset_name, path):
 
     test_path = path+'/val/images'
     image_index = 0
-    for image_file in os.listdir(test_path):
+    for image_file in tqdm(os.listdir(test_path)):
         if test_label_map[image_file] in label_map.keys():
             image_blob = Image.open(os.path.join(test_path, image_file))
             image_array = np.array(image_blob.getdata())
@@ -100,5 +100,12 @@ def load_data_external(dataset_name, path):
             image_index = image_index + 1
         else:
             pass
-    #All read done
+    #All read done, save h5py data before returning
+    data_file = h5py.File('tiny_imagenet.h5', 'w')
+    group_data = data_file.create_group('tiny_imagenet_group')
+    group_data.create_dataset('x_train', data=x_train, compression="gzip")
+    group_data.create_dataset('y_train', data=y_train, compression="gzip")
+    group_data.create_dataset('x_test', data=x_test, compression="gzip")
+    group_data.create_dataset('y_test', data=y_test, compression="gzip")
+    data_file.close()
     return (x_train, y_train), (x_test, y_test)
