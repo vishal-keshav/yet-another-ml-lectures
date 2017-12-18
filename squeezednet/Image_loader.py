@@ -4,6 +4,9 @@ TITLE : Image loader utility for fetching train/test data
 """
 from keras.datasets import mnist, fashion_mnist, cifar10, cifar100
 from keras.utils import to_categorical
+from PIL import Image
+import numpy as np
+import os
 
 def load_data_simple(dataset_name):
     if dataset_name == 'mnist':
@@ -40,4 +43,62 @@ def load_data_simple(dataset_name):
     x_test = x_test.astype('float32')
     x_train = x_train/225
     t_test = x_test/225
+    return (x_train, y_train), (x_test, y_test)
+
+def load_data_external(dataset_name, path):
+    x_train = np.zeros([200*500, 64, 64, 3], dtype='uint32')
+    y_train = np.zeros([200*500], dtype='uint32')
+    x_test = np.zeros([200*50, 64, 64, 3], dtype='uint32')
+    y_test = np.zeros([200*50], dtype='uint32')
+    train_path = path+'/train'
+    image_index = 0
+    class_index = 0
+    label_map = {}
+    for class_folder in os.listdir(train_path):
+        class_image_dir = os.path.join(os.path.join(train_path, class_folder), 'images')
+        label_map[class_folder] = class_index
+        for image_file in os.listdir(class_image_dir):
+            image_blob = Image.open(os.path.join(class_image_dir, image_file))
+            #If image is black-white (one channel)
+            image_array = np.array(image_blob.getdata())
+            if image_array.size == 64*64:
+                image_array = image_array.reshape(image_blob.size[0], image_blob.size[1])
+                image_array = np.array([image_array, image_array, image_array]).reshape(image_blob.size[0], image_blob.size[1], 3)
+            else:
+                image_array = image_array.reshape(image_blob.size[0], image_blob.size[1], 3)
+            x_train[image_index] = image_array
+            y_train[image_index] = class_index
+            image_index = image_index + 1
+            if image_index%50 == 0:
+                break
+        class_index = class_index + 1
+        if class_index >= 200:
+            break
+    #Reading validation data as test data
+    val_data_path = path+'/val/val_annotations.txt'
+    val_data_file = open(val_data_path, 'r')
+    val_data_content = val_data_file.read()
+
+    test_label_map = {}
+    for line in val_data_content.splitlines():
+        words = line.strip().split()
+        test_label_map[words[0]] = words[1]
+
+    test_path = path+'/val/images'
+    image_index = 0
+    for image_file in os.listdir(test_path):
+        if test_label_map[image_file] in label_map.keys():
+            image_blob = Image.open(os.path.join(test_path, image_file))
+            image_array = np.array(image_blob.getdata())
+            if image_array.size == 64*64:
+                image_array = image_array.reshape(image_blob.size[0], image_blob.size[1])
+                image_array = np.array([image_array, image_array, image_array]).reshape(image_blob.size[0], image_blob.size[1], 3)
+            else:
+                image_array = image_array.reshape(image_blob.size[0], image_blob.size[1], 3)
+            x_test[image_index] = image_array
+            y_test[image_index] = label_map[test_label_map[image_file]]
+            image_index = image_index + 1
+        else:
+            pass
+    #All read done
     return (x_train, y_train), (x_test, y_test)

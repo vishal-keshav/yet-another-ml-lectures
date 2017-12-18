@@ -14,10 +14,17 @@ from keras import backend as K
 
 import Utility
 import Image_loader
+import os
 
 def main():
     args = Utility.argument_parser()
-    (x_train, y_train), (x_test, y_test) = Image_loader.load_data(args.dataset)
+    os.chdir('../../Dataset/tiny-imagenet-200/')
+    data_path = os.getcwd()
+    (x_train, y_train), (x_test, y_test) = Image_loader.load_data_external("tiny_imagenet", data_path)
+    print(x_train.shape)
+    print(y_train.shape)
+    print(x_test.shape)
+    print(y_test.shape)
     #model_def = define_model([28,28,1], len(np.unique(np.argmax(y_test, 1))))
     #model_def.summary()
 
