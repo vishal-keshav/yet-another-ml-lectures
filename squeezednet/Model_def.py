@@ -29,8 +29,8 @@ def define_model(input_shape, output_class, args):
     SR = args.SR
     #Model construction
     model_input = Input(shape = input_shape)
-    tensor = Conv2D(filters = 96, kernel_size = (7,7), strides = (2,2), padding = 'same',
-                    kernel_initializer='glorot_uniform')(model_input)
+    tensor = Conv2D(filters = 96, kernel_size = (3,3), strides = (1,1), padding = 'same',
+                     activation='relu', kernel_initializer='glorot_uniform')(model_input)
     tensor = MaxPooling2D(pool_size = (3,3), strides = (2,2))(tensor)
     for i in range(8):
         expand_kernels = base_expand_kernels + (expansion_increment*(i/freq))
@@ -39,7 +39,7 @@ def define_model(input_shape, output_class, args):
         nr_expand_3 = expand_kernels - nr_expand_1
         tensor = fire_module(tensor, nr_squeeze_1, nr_expand_1, nr_expand_3)
         if i in max_pooling_index:
-            tensor = MaxPooling2D(pool_size = (3,3), strides = (2,2))(tensor)
+            tensor = MaxPooling2D(pool_size = (2,2), strides = (2,2))(tensor)
     tensor = Dropout(rate = 0.5)(tensor)
     tensor = Conv2D(filters = output_class, kernel_size = (1,1), strides = (1,1),
              padding = 'valid', kernel_initializer = 'glorot_uniform')(tensor)

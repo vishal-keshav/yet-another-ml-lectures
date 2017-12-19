@@ -52,7 +52,7 @@ def load_model(model_name):
 
 def train_model(model, data, args):
     (x_train, y_train), (x_test, y_test) = data
-    model.compile(optimizer = Adam(lr=args.l_rate, decay = args.l_decay),
+    model.compile(optimizer = Adam(lr=args.l_rate),
                   loss = 'categorical_crossentropy', metrics = ['accuracy'])
     tensorboard_callback = TB(log_dir = args.save, histogram_freq = 0, write_graph = True)
     model.fit(x_train, y_train, batch_size=args.batch_size, epochs=args.epochs,
@@ -65,11 +65,13 @@ def test_model(model, data):
 
 def main():
     args = Utility.argument_parser()
-    (x_train, y_train), (x_test, y_test) = load_tinyimagenet()
+    #(x_train, y_train), (x_test, y_test) = load_tinyimagenet()
+    (x_train, y_train), (x_test, y_test) = Image_loader.load_data_simple("mnist")
     if os.path.isfile(args.model_name + ".json"):
         model_def = load_model(args.model_name)
     else:
-        model_def = Model_def.define_model([64,64,3], 200, args)
+        #model_def = Model_def.define_model([64,64,3], 200, args)
+        model_def = Model_def.define_model([28,28,1], 10, args)
         model_def.summary()
 
     if args.plot != '0':
