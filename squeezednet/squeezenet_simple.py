@@ -63,14 +63,12 @@ def train_model(model, data, args):
 
 def main():
     args = Utility.argument_parser()
-    #(x_train, y_train), (x_test, y_test) = load_tinyimagenet()
+    (x_train, y_train), (x_test, y_test) = load_tinyimagenet()
     model_def = Model_def.define_model([64,64,3], 200, args)
     model_def.summary()
     if args.plot != '0':
         plot_model(model_def, to_file=args.plot, show_shapes = False, show_layer_names = True)
 
-    #model_def = define_model([28,28,1], len(np.unique(np.argmax(y_test, 1))))
-    #model_def.summary()
 
 if __name__ == "__main__":
     main()

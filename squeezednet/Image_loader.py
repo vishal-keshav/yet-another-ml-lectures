@@ -100,12 +100,19 @@ def load_data_external(dataset_name, path):
             image_index = image_index + 1
         else:
             pass
+    #Normalize the data and make y categorical
+    x_train = x_train.astype('float32')
+    x_test = x_test.astype('float32')
+    x_train = x_train/225
+    x_test = x_test/225
+    y_train = to_categorical(y_train, 200)
+    y_test = to_categorical(y_test, 200)
     #All read done, save h5py data before returning
     data_file = h5py.File('tiny_imagenet.h5', 'w')
     group_data = data_file.create_group('tiny_imagenet_group')
-    group_data.create_dataset('x_train', data=x_train, compression="gzip")
-    group_data.create_dataset('y_train', data=y_train, compression="gzip")
-    group_data.create_dataset('x_test', data=x_test, compression="gzip")
-    group_data.create_dataset('y_test', data=y_test, compression="gzip")
+    group_data.create_dataset('x_train', data=x_train, compression="gzip", compression_opts=2)
+    group_data.create_dataset('y_train', data=y_train, compression="gzip", compression_opts=2)
+    group_data.create_dataset('x_test', data=x_test, compression="gzip", compression_opts=2)
+    group_data.create_dataset('y_test', data=y_test, compression="gzip", compression_opts=2)
     data_file.close()
     return (x_train, y_train), (x_test, y_test)
