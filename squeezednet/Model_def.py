@@ -33,9 +33,9 @@ def define_model(input_shape, output_class, args):
                     kernel_initializer='glorot_uniform')(model_input)
     tensor = MaxPooling2D(pool_size = (3,3), strides = (2,2))(tensor)
     for i in range(8):
-        expand_kernels = base_expand_kernels*(expansion_increment*(i/freq))
+        expand_kernels = base_expand_kernels + (expansion_increment*(i/freq))
         nr_squeeze_1 = int(SR*expand_kernels)
-        nr_expand_1 = int(expand_kernels*(1-pct))
+        nr_expand_1 = int(expand_kernels*(1.0-pct))
         nr_expand_3 = expand_kernels - nr_expand_1
         tensor = fire_module(tensor, nr_squeeze_1, nr_expand_1, nr_expand_3)
         if i in max_pooling_index:

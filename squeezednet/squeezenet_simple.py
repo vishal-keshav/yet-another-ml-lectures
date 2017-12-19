@@ -42,7 +42,7 @@ def save_model(model, model_name):
     model.save_weights(model_name+".h5")
     print("Saved model in the name:" + model_name)
 
-def save_model(model_name):
+def load_model(model_name):
     json_file = open(model_name+".json","r")
     loaded_model_json = json_file.read()
     json_file.close()
@@ -52,22 +52,33 @@ def save_model(model_name):
 
 def train_model(model, data, args):
     (x_train, y_train), (x_test, y_test) = data
-    model.compile(optimizer = Adam(lr=args.l_rate),
-                  loss = 'categorical_crossentropy',
-                  metrics = ['accuracy'])
-    tensorboard_callback = TB(log_dir = args.save, histogram_freq = 0,
-                              write_graph = True)
+    model.compile(optimizer = Adam(lr=args.l_rate, decay = args.l_decay),
+                  loss = 'categorical_crossentropy', metrics = ['accuracy'])
+    tensorboard_callback = TB(log_dir = args.save, histogram_freq = 0, write_graph = True)
     model.fit(x_train, y_train, batch_size=args.batch_size, epochs=args.epochs,
 			  callbacks = [tensorboard_callback], validation_data=[x_test, y_test])
+    save_model(model, args.model_name)
 
+def test_model(model, data):
+    (x_test, y_test) = data
+    model.evaluate(x_test, y_test, verbose=0)
 
 def main():
     args = Utility.argument_parser()
     (x_train, y_train), (x_test, y_test) = load_tinyimagenet()
-    model_def = Model_def.define_model([64,64,3], 200, args)
-    model_def.summary()
+    if os.path.isfile(args.model_name + ".json"):
+        model_def = load_model(args.model_name)
+    else:
+        model_def = Model_def.define_model([64,64,3], 200, args)
+        model_def.summary()
+
     if args.plot != '0':
         plot_model(model_def, to_file=args.plot, show_shapes = False, show_layer_names = True)
+
+    if args.is_training:
+        train_model(model_def, ((x_train, y_train),(x_test, y_test)), args)
+    else:
+        test_model(model_def, (x_test, y_test))
 
 
 if __name__ == "__main__":
