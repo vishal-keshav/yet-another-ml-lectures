@@ -11,10 +11,12 @@ from keras.layers.normalization import BatchNormalization
 from keras.models import Model, model_from_json
 from keras.optimizers import Adam
 from keras.callbacks import TensorBoard as TB
+from keras.utils.vis_utils import plot_model
 from keras import backend as K
 
 import Utility
 import Image_loader
+import Model_def
 import os
 import h5py
 
@@ -55,13 +57,17 @@ def train_model(model, data, args):
                   metrics = ['accuracy'])
     tensorboard_callback = TB(log_dir = args.save, histogram_freq = 0,
                               write_graph = True)
-	model.fit(x_train, y_train, batch_size=args.batch_size, epochs=args.epochs,
+    model.fit(x_train, y_train, batch_size=args.batch_size, epochs=args.epochs,
 			  callbacks = [tensorboard_callback], validation_data=[x_test, y_test])
 
 
 def main():
     args = Utility.argument_parser()
-    (x_train, y_train), (x_test, y_test) = load_tinyimagenet()
+    #(x_train, y_train), (x_test, y_test) = load_tinyimagenet()
+    model_def = Model_def.define_model([64,64,3], 200, args)
+    model_def.summary()
+    if args.plot != '0':
+        plot_model(model_def, to_file=args.plot, show_shapes = False, show_layer_names = True)
 
     #model_def = define_model([28,28,1], len(np.unique(np.argmax(y_test, 1))))
     #model_def.summary()

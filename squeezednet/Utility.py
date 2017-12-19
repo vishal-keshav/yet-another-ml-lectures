@@ -12,5 +12,12 @@ def argument_parser():
     parser.add_argument('--l_decay', default=0.01, type=float, help='Learning decay for momentum')
     parser.add_argument('--dataset', default='cifar100', type=str, help='Dataset from keras')
     parser.add_argument('--save', default='./logs', type=str, help='Dataset from keras')
+    parser.add_argument('--plot', default='0', type=str, help='Plot the model graph')
+    #Metaparameters for squeeze-net
+    parser.add_argument('--base_expand', default= 128, type=int, help='Number of expansion filter in first fire module')
+    parser.add_argument('--expansion_increment', default= 128, type=int, help='Increase in channel through expansion')
+    parser.add_argument('--pct', default=0.5, type=float, help='Ratio of 1X1 and 3X3 expansion filters in fire module')
+    parser.add_argument('--freq', default=2, type=int, help='Expansion in filters every freq fire modules')
+    parser.add_argument('--SR', default=0.125, type=float, help='Squeeze ratio of squeeze and expand filters')
     args = parser.parse_args()
     return args
