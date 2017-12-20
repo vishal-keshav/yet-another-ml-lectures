@@ -17,6 +17,7 @@ from keras import backend as K
 import Utility
 import Image_loader
 import Model_def
+import Model_def_dilated
 import os
 import h5py
 
@@ -68,10 +69,16 @@ def main():
     #(x_train, y_train), (x_test, y_test) = load_tinyimagenet()
     (x_train, y_train), (x_test, y_test) = Image_loader.load_data_simple("mnist")
     if os.path.isfile(args.model_name + ".json"):
+        print("Model:" + args_model_name +  " loaded")
         model_def = load_model(args.model_name)
     else:
         #model_def = Model_def.define_model([64,64,3], 200, args)
-        model_def = Model_def.define_model([28,28,1], 10, args)
+        if args.dilation == 0:
+            model_def = Model_def.define_model([28,28,1], 10, args)
+        else:
+            print("Dilation of " + str(args.dilation) + " applied")
+            model_def = Model_def_dilated.define_model([28,28,1], 10, args)
+
         model_def.summary()
 
     if args.plot != '0':

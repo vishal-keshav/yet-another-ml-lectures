@@ -21,5 +21,6 @@ def argument_parser():
     parser.add_argument('--pct', default=0.5, type=float, help='Ratio of 1X1 and 3X3 expansion filters in fire module')
     parser.add_argument('--freq', default=2, type=int, help='Expansion in filters every freq fire modules')
     parser.add_argument('--SR', default=0.125, type=float, help='Squeeze ratio of squeeze and expand filters')
+    parser.add_argument('--dilation', default=0, type=int, help='Apply diltion rate, if 0 then no dilation')
     args = parser.parse_args()
     return args
