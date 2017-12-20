@@ -48,10 +48,10 @@ def load_data_simple(dataset_name):
     return (x_train, y_train), (x_test, y_test)
 
 def load_data_external(dataset_name, path):
-    x_train = np.zeros([200*500, 64, 64, 3], dtype='uint32')
-    y_train = np.zeros([200*500], dtype='uint32')
-    x_test = np.zeros([200*50, 64, 64, 3], dtype='uint32')
-    y_test = np.zeros([200*50], dtype='uint32')
+    x_train = np.zeros([200*500, 64, 64, 3], dtype='uint8')
+    y_train = np.zeros([200*500], dtype='uint8')
+    x_test = np.zeros([200*50, 64, 64, 3], dtype='uint8')
+    y_test = np.zeros([200*50], dtype='uint8')
     train_path = path+'/train'
     image_index = 0
     class_index = 0
@@ -107,6 +107,12 @@ def load_data_external(dataset_name, path):
     x_test = x_test/225
     y_train = to_categorical(y_train, 200)
     y_test = to_categorical(y_test, 200)
+    permute_train = np.random.permutation(x_train.shape[0])
+    permute_test = np.random.permutation(x_test.shape[0])
+    x_train = x_train[permute_train]
+    y_train = y_train[permute_train]
+    x_test = x_test[permute_test]
+    y_test = y_test[permute_test]
     #All read done, save h5py data before returning
     data_file = h5py.File('tiny_imagenet.h5', 'w')
     group_data = data_file.create_group('tiny_imagenet_group')
