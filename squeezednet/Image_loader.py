@@ -25,7 +25,7 @@ def load_data_simple(dataset_name):
     if(dataset_name == 'cifar10' or dataset_name == 'cifar100'):
         x_train = x_train.reshape(x_train.shape[0], 32, 32, 3)
         x_test = x_test.reshape(x_test.shape[0], 32, 32, 3)
-        if dataset_set == 'cifar10':
+        if dataset_name == 'cifar10':
             y_train = to_categorical(y_train, 10)
             y_test = to_categorical(y_test, 10)
         else:
