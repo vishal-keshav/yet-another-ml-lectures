@@ -4,6 +4,7 @@ TITLE : Image loader utility for fetching train/test data
 """
 from keras.datasets import mnist, fashion_mnist, cifar10, cifar100
 from keras.utils import to_categorical
+from keras.preprocessing import image
 from PIL import Image
 import numpy as np
 import os
@@ -122,3 +123,39 @@ def load_data_external(dataset_name, path):
     group_data.create_dataset('y_test', data=y_test, compression="gzip", compression_opts=2)
     data_file.close()
     return (x_train, y_train), (x_test, y_test)
+
+def load_data_caltech(dataset_name, path):
+    directory_list = [x[0] for x in os.walk(path)][1:]
+    print(directory_list)
+    label_map = {class_index: os.path.basename(class_name) for class_index, class_name in enumerate(directory_list)}
+    num_labels = len(label_map)
+    x_train = []
+    y_train = []
+    x_test = []
+    y_test = []
+    for class_index, class_name in label_map.iteritems():
+        class_path = os.path.join(path, class_name)
+        files = [os.path.join(class_path, f) for f in os.listdir(class_path)
+                if os.path.isfile(os.path.join(class_path, f))]
+        imgs = []
+        for img_file in files:
+            img = image.load_img(img_file, target_size=(224, 224))
+            imgs.append(image.img_to_array(img))
+
+        # Decide on the index to split training and test sets at
+        split = int(np.floor(len(imgs) * args.train_test_ratio))
+
+        x_train.append(np.stack(imgs[:split], axis=0))
+        x_test.append(np.stack(imgs[split:], axis=0))
+
+        train_batch_len = len(imgs[:split])
+        train_y = np.multiply(int(class_idx),
+                              np.ones((train_batch_len,), dtype=int))
+        y_train.append(train_y)
+
+        test_batch_len = len(imgs[split:])
+        test_y = np.multiply(int(class_idx),
+                             np.ones((test_batch_len,), dtype=int))
+        y_test.append(test_y)
+
+    return ((np.concatenate(x_train), np.concatenate(y_train)), (np.concatenate(x_test), np.concatenate(y_test)))
