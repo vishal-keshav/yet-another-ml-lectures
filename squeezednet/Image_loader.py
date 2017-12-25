@@ -158,7 +158,7 @@ def load_data_caltech(dataset_name, path):
     x_test = x_test[permute_test]
     y_test = y_test[permute_test]
     data_file = h5py.File('../caltech101.h5', 'w')
-    group_data = data_file.create_group('clatech101_group')
+    group_data = data_file.create_group('caltech101_group')
     group_data.create_dataset('x_train', data=x_train, compression="gzip", compression_opts=2)
     group_data.create_dataset('y_train', data=y_train, compression="gzip", compression_opts=2)
     group_data.create_dataset('x_test', data=x_test, compression="gzip", compression_opts=2)
