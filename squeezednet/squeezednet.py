@@ -21,6 +21,21 @@ import Model_def_dilated
 import os
 import h5py
 
+def load_caltech101():
+    os.chdir('../../Dataset/101_ObjectCategories/')
+    data_path = os.getcwd()
+    if os.path.isfile("../caltech101.h5"):
+        data_file = h5py.File('../caltech101.h5', 'r')
+        group_data = data_file.get('caltech101_group')
+        x_train = np.array(group_data.get('x_train'))
+        y_train = np.array(group_data.get('y_train'))
+        x_test = np.array(group_data.get('x_test'))
+        y_test = np.array(group_data.get('y_test'))
+        data_file.close()
+    else:
+        (x_train, y_train), (x_test, y_test) = Image_loader.load_data_caltech("caltech101", data_path)
+    return (x_train, y_train), (x_test, y_test)
+
 def load_tinyimagenet():
     os.chdir('../../Dataset/tiny-imagenet-200/')
     data_path = os.getcwd()
@@ -67,17 +82,18 @@ def test_model(model, data):
 def main():
     args = Utility.argument_parser()
     #(x_train, y_train), (x_test, y_test) = load_tinyimagenet()
-    (x_train, y_train), (x_test, y_test) = Image_loader.load_data_simple("mnist")
+    #(x_train, y_train), (x_test, y_test) = Image_loader.load_data_simple("mnist")
+    (x_train, y_train), (x_test, y_test) = load_caltech101()
     if os.path.isfile(args.model_name + ".json"):
         print("Model:" + args.model_name +  " loaded")
         model_def = load_model(args.model_name)
     else:
         #model_def = Model_def.define_model([64,64,3], 200, args)
         if args.dilation == 0:
-            model_def = Model_def.define_model([28,28,1], 10, args)
+            model_def = Model_def.define_model([224,224,3], 102, args)
         else:
             print("Dilation of " + str(args.dilation) + " applied")
-            model_def = Model_def_dilated.define_model([28,28,1], 10, args)
+            model_def = Model_def_dilated.define_model([224,224,3], 102, args)
 
         model_def.summary()
 

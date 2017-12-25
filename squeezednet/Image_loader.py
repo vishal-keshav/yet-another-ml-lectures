@@ -125,37 +125,43 @@ def load_data_external(dataset_name, path):
     return (x_train, y_train), (x_test, y_test)
 
 def load_data_caltech(dataset_name, path):
-    directory_list = [x[0] for x in os.walk(path)][1:]
-    print(directory_list)
-    label_map = {class_index: os.path.basename(class_name) for class_index, class_name in enumerate(directory_list)}
-    num_labels = len(label_map)
-    x_train = []
-    y_train = []
-    x_test = []
-    y_test = []
+    directory_name_list = [x for x in os.walk(path)][0][1]
+    label_map = {class_index: class_name for class_index, class_name in enumerate(directory_name_list)}
+    x_train_array = []
+    y_train_array = []
+    x_test_array = []
+    y_test_array = []
     for class_index, class_name in label_map.iteritems():
         class_path = os.path.join(path, class_name)
-        files = [os.path.join(class_path, f) for f in os.listdir(class_path)
-                if os.path.isfile(os.path.join(class_path, f))]
-        imgs = []
-        for img_file in files:
-            img = image.load_img(img_file, target_size=(224, 224))
-            imgs.append(image.img_to_array(img))
-
-        # Decide on the index to split training and test sets at
-        split = int(np.floor(len(imgs) * args.train_test_ratio))
-
-        x_train.append(np.stack(imgs[:split], axis=0))
-        x_test.append(np.stack(imgs[split:], axis=0))
-
-        train_batch_len = len(imgs[:split])
-        train_y = np.multiply(int(class_idx),
-                              np.ones((train_batch_len,), dtype=int))
-        y_train.append(train_y)
-
-        test_batch_len = len(imgs[split:])
-        test_y = np.multiply(int(class_idx),
-                             np.ones((test_batch_len,), dtype=int))
-        y_test.append(test_y)
-
-    return ((np.concatenate(x_train), np.concatenate(y_train)), (np.concatenate(x_test), np.concatenate(y_test)))
+        image_file_path_list = [os.path.join(class_path, f) for f in os.listdir(class_path)]
+        temp_image_array = []
+        for image_file_path in image_file_path_list:
+            image_blob = image.load_img(path = image_file_path, grayscale = False, target_size = (224, 224))
+            temp_image_array.append(image.img_to_array(image_blob))
+        split = int(np.floor(len(temp_image_array)*0.95))
+        x_train_array.append(np.stack(temp_image_array[:split], axis=0))
+        x_test_array.append(np.stack(temp_image_array[split:], axis=0))
+        y_train_array.append(np.full(shape = (len(temp_image_array[:split])), fill_value = class_index))
+        y_test_array.append(np.full(shape = (len(temp_image_array[split:])),fill_value = class_index))
+    x_train = np.concatenate(x_train_array)
+    y_train = to_categorical(np.concatenate(y_train_array), 102)
+    x_test = np.concatenate(x_test_array)
+    y_test = to_categorical(np.concatenate(y_test_array), 102)
+    x_train = x_train.astype('float32')
+    x_test = x_test.astype('float32')
+    x_train = x_train/225
+    x_test = x_test/225
+    permute_train = np.random.permutation(x_train.shape[0])
+    permute_test = np.random.permutation(x_test.shape[0])
+    x_train = x_train[permute_train]
+    y_train = y_train[permute_train]
+    x_test = x_test[permute_test]
+    y_test = y_test[permute_test]
+    data_file = h5py.File('../caltech101.h5', 'w')
+    group_data = data_file.create_group('clatech101_group')
+    group_data.create_dataset('x_train', data=x_train, compression="gzip", compression_opts=2)
+    group_data.create_dataset('y_train', data=y_train, compression="gzip", compression_opts=2)
+    group_data.create_dataset('x_test', data=x_test, compression="gzip", compression_opts=2)
+    group_data.create_dataset('y_test', data=y_test, compression="gzip", compression_opts=2)
+    data_file.close()
+    return (x_train, y_train), (x_test, y_test)
