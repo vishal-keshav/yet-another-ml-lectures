@@ -22,9 +22,11 @@ def create_graph():
 def create_another_graph():
     var_shape = [2,3]
     #var1 = tf.Variable(tf.truncated_normal(var_shape), name = 'var_1')
-    var1 = tf.get_variable(initializer = tf.truncated_normal(var_shape), name = 'var_1')
+    with tf.variable_scope("var_1_scope"):
+        var1 = tf.get_variable(initializer = tf.truncated_normal(var_shape), name = 'var_1')
     # Wrong == var2 = tf.Variable(var1*5)
-    var2 = tf.Variable(var1.initialized_value()*5, name = 'var_2')
+    with tf.variable_scope("var_2_scope"):
+        var2 = tf.Variable(var1.initialized_value()*5, name = 'var_2')
     placeholder = tf.placeholder(dtype = tf.float32, shape = var_shape, name = 'placeholder_1')
     out = tf.add(var2, placeholder, name = 'ops_out')
     return var1,var2,placeholder,out
@@ -59,11 +61,24 @@ def main():
         sess.run(tf.variables_initializer([var_1, var_2]))
         print(var_2.eval())
 
+        """
+        getting var_1 and var_2 directly from graph using their tensor output names
+        """
+        #duplicate_var_2 = graph.get_tensor_by_name('var_2:0')
+        with tf.variable_scope("var_1_scope", reuse = tf.AUTO_REUSE):
+            duplicate_var_1 = tf.get_variable("var_1")
+        #with tf.variable_scope("var_2_scope", reuse = tf.AUTO_REUSE):
+        #    duplicate_var_2 = tf.get_variable("var_2")
+        if var_1 is duplicate_var_1:
+            print("Got var_1 from graph, now can be initialized")
+        else:
+            print("Unable to get variable")
+
         ops_list = graph.get_operations()
         tensor_list = np.array([ops.values() for ops in ops_list])
         feedable = np.array([graph.is_feedable(tensor) for tensor in tensor_list])
         feed = list(zip(tensor_list,feedable))
-        print(feed)
+        #print(feed)
 
         print(sess.run(out, feed_dict = {holder: np.array([[1.,2.,3.],[1.,2.,3.]], dtype = np.float32)}))
         print('*****End of examples******')
