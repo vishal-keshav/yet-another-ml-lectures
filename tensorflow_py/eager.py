@@ -6,7 +6,7 @@ if __name__ == '__main__':
     tf.enable_eager_execution()
 
     if tf.executing_eagerly():
-        print('Eager execution is enables')
+        print('Eager execution is enabled')
 
     #Graph in eager
     a = tf.constant(10)
