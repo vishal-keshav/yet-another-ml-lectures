@@ -1,2 +1,2 @@
 # Going-deeper
-Repository to capture all deep learning ideas I have and ideas that might come in future.
+Ideas as random as Stochastic gradients, average them all, it will make sense.
