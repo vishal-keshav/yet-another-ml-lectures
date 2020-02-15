@@ -44,6 +44,7 @@
 * KL divergence: Measures distance between two distribution P and Q over same random variable X, given by E_{x~P}[log(P(x)/Q(x))]
 * KL divergence provides extra bits of info sampled from P but using the codes designed to encode info sampled from Q.
 * The characteriscs of forward KL (zero spreading) and backward KL (zero inducing) is described [here](https://wiseodd.github.io/techblog/2016/12/21/forward-reverse-kl/)
+* (Advanced) Density ratio estimation in KL divergence in tensorflow [here](https://tiao.io/post/density-ratio-estimation-for-kl-divergence-minimization-between-implicit-distributions/)
 * Cross-entropy: Uncertainity in a distribution Q averaged over samples from another (cross) distribution P, given by E_{x~P}[-log(Q(x))].
 * Cross entropy is also equal to Self-entropy of P and KL divergence between P and Q. So, minimizing Cross entropy with respect to Q minimizes forward KL divergence between P and Q.
 * Empirical distribution: Since real distribution is not available and we only get the data points sampled from real distribution, empirical distribution replaces the real distribution by putting equal probabilities on each data samples (with IID assumption).
