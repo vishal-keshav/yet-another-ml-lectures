@@ -14,6 +14,7 @@
 | [4](##Week 4) |Introduction          | ---      |
 | [5](##Week 5) |Probability           | [Notes](https://www.dropbox.com/sh/b2e2rbc41kfi7rz/AADhtGrZbH-U-po2HBq8zCcqa?dl=0)      |
 | [8](##Week 8) |Information theory, bias-variance tradeoff    | ---      |
+| [9](##Week 9) |Pytorch hands-on | Code |
 
 
 
@@ -53,3 +54,9 @@
 * Bias: It is distance of estimated parameter from real parameters (which is unknown), given by E[theta] - real_theta.
 * Variance: It represents the variation in parameters for small perturbation in observed data (and hence point estimation).
 * MSE and bias-variance tradeoff: E[(theta - real_theta)^2] = E[(theta -E[theta] + E[theta] - real_theta)^2] = E[(theta - E[theta])^2 + (real_theta-E[theta])^2 + 2*(theta-E[theta])* (real_theta-E[theta])] = Bias^2 + Var + (real_theta - E[theta])* 0
+
+## Week 9
+* When pytorch? (cheap, easy code, not fast), when tensorflow? (production level code, very fast, established infra)
+* Start with pytorch, once proof-of-concept is ready, migrate code to tensorflow.
+* Structure code: refer framework test directory, ready to do a **lot** of hyper-parameter search (but not blindly).
+* Debugging through visualization is very very very important. Eg. distribution plot of floats out of a layer, weights.

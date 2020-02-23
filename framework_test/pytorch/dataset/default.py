@@ -1,4 +1,9 @@
+import os
+import sys
 from torch.utils.data import Dataset
+
+sys.path.append(os.path.abspath('.'))
+from utils.utils import stringify
 
 class dataset(Dataset):
     def __init__(self):
@@ -7,3 +12,10 @@ class dataset(Dataset):
         return 0
     def __len__(self):
         return 0
+
+def test():
+    d = dataset()
+    print(len(d))
+
+if __name__ == "__main__":
+    test()
