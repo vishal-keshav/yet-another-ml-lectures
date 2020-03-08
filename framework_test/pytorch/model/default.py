@@ -1,9 +1,16 @@
 import os
 import sys
-import torch.nn as nn
+import numpy as np
 
-sys.path.append(os.path.abspath('.'))
-from utils.utils import stringify
+import torch
+import torch.nn as nn
+from torch.autograd import Variable
+
+sys.path.append(os.path.abspath('./utils'))
+from utils import stringify
+
+is_cuda = torch.cuda.is_available()
+device = torch.device("cuda" if is_cuda else "cpu")
 
 class model(nn.Module):
     def __init__(self):
@@ -11,7 +18,10 @@ class model(nn.Module):
         pass
     def forward(self, x):
         return
+    def forward_inference(self, x):
+        return
 
+#################################### Test ######################################
 def test():
     m = model()
     print(m)
