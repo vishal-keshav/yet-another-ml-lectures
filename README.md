@@ -15,6 +15,7 @@
 | [5](##Week 5) |Probability           | [Notes](https://www.dropbox.com/sh/b2e2rbc41kfi7rz/AADhtGrZbH-U-po2HBq8zCcqa?dl=0)      |
 | [8](##Week 8) |Information theory, bias-variance tradeoff    | ---      |
 | [9](##Week 9) |Pytorch hands-on | Code |
+| [10](##Week 10) | Linear Algebra 1 | --- |
 
 
 
@@ -60,3 +61,12 @@
 * Start with pytorch, once proof-of-concept is ready, migrate code to tensorflow.
 * Structure code: refer framework test directory, ready to do a **lot** of hyper-parameter search (but not blindly).
 * Debugging through visualization is very very very important. Eg. distribution plot of floats out of a layer, weights.
+
+## Week 11
+* Vector space and sub-spaces. Sub-spaces should have zero element and should follow clouser property.
+* Generating set is a set of vectors that **spans** the vector space. Basis of a vector space are linearly independent vector set that spans the vector space.
+* Rank is the number of linearly independent rows or linearly independent columns.
+* Linear mapping (and its properties such as homo-morphism) and linear transformation matrix.
+* Kernels (with relation to matrix transformation) are all vectors that are zero vectors in original vector space.
+* Norms and inner-product maps V or VXV to R, where V is the vector space. They measure the length and distance.
+* Orthonormal/orthogonal basis and orthogonal projection. Gram Smidt process to find such basis.
