@@ -2,9 +2,9 @@ config={
 'project_name': 'project',
 'workspace': 'workspace',
 ######################## USE LISTS FOR HPs(GRID SEARCH) ########################
-'learning_rate': [0.0001, 0.00001],
-'nr_epochs': [100, 200],
-'batch_size': [8, 16],
+'learning_rate': [0.001, 0.1],
+'nr_epochs': [200, 1000],
+'batch_size': [8,16],
 ########################## ENABLE THIS FOR HP SEARCH ###########################
 #'metric': 'loss',
 #'objective': 'minimize',

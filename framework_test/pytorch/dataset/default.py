@@ -4,8 +4,8 @@ import sys
 import torch
 from torch.utils.data import Dataset
 
-sys.path.append(os.path.abspath('./utils'))
-from utils import stringify
+sys.path.append(os.path.abspath('.'))
+from utils.utils import stringify
 
 is_cuda = torch.cuda.is_available()
 device = torch.device("cuda" if is_cuda else "cpu")
@@ -16,7 +16,7 @@ class dataset(Dataset):
     def __getitem__(self, idx):
         return 0
     def __len__(self):
-        return 0
+        return 100
 
 ################################## Test ########################################
 def test():

@@ -14,9 +14,9 @@ def argument_parser():
     parser = argparse.ArgumentParser(description="sample")
     parser.add_argument('--config', default='default', type=str, help='config')
     parser.add_argument('--trainer', default='default', type=str,help='trainer')
-    parser.add_argument('--dataset', default='default', type=str, elp='dataset')
+    parser.add_argument('--dataset', default='default', type=str,help='dataset')
     parser.add_argument('--model', default='default', type=str, help='model')
-    parser.add_argument('--experiment', default=1, type=int, help='comet.ml')
+    parser.add_argument('--experiment', default=0, type=int, help='comet.ml')
     args = parser.parse_args()
     return args
 
