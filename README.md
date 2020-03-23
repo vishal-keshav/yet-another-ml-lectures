@@ -15,7 +15,8 @@
 | [5](##Week 5) |Probability           | [Notes](https://www.dropbox.com/sh/b2e2rbc41kfi7rz/AADhtGrZbH-U-po2HBq8zCcqa?dl=0)      |
 | [8](##Week 8) |Information theory, bias-variance tradeoff    | ---      |
 | [9](##Week 9) |Pytorch hands-on | Code |
-| [10](##Week 10) | Linear Algebra 1 | --- |
+| [11](##Week 11) | Linear Algebra 1 | --- |
+| [12](##Week 12) | Metrics for un-balanced data | --- |
 
 
 
@@ -70,3 +71,14 @@
 * Kernels (with relation to matrix transformation) are all vectors that are zero vectors in original vector space.
 * Norms and inner-product maps V or VXV to R, where V is the vector space. They measure the length and distance.
 * Orthonormal/orthogonal basis and orthogonal projection. Gram Smidt process to find such basis.
+
+## Week 12
+* True positive: hit, Red squres with dog face.
+* False negative: miss, Yelow squares with dog face.
+* False positive: Low skill model, Req squares without dog face.
+* True negative: All regions other red and yellow squares.
+* Precision: Out of positive predictions, how many were actually correct.
+* Recall: Out of all actual postitive labels, how many we got.
+![precision_recall_demostration](res/precision_recall.png)
+* AUC curve measure the models skill for balanced data as we vary the probability threshold.
+* Precision-recall curve summarizes the model's skill for un-balanced data where positive examples are the real concern.
