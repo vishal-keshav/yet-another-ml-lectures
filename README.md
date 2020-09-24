@@ -1,8 +1,6 @@
 # yet-another-ml-lectures
 
-> I have started providing some sessions(very informal) on machine learning to my fellow classmates who needed help with it. I mostly focus on mathematics and programming in pytorch. I will update my notes on a weekly basis after my session.
-
-## Books I follow(strictly) to prepare the lecture notes
+## Books followed
 * [MML-book](https://mml-book.github.io/book/mml-book.pdf)
 * [math4ml](https://gwthomas.github.io/docs/math4ml.pdf)
 * [Deep Learning Book](https://www.deeplearningbook.org/)
@@ -17,6 +15,7 @@
 | [9](##Week 9) |Pytorch hands-on | Code |
 | [11](##Week 11) | Linear Algebra 1 | --- |
 | [12](##Week 12) | Metrics for un-balanced data | --- |
+| [12](##Week 13) | Baysian Shit | --- |
 
 
 
@@ -82,3 +81,8 @@
 ![precision_recall_demostration](res/precision_recall.png)
 * AUC curve measure the models skill for balanced data as we vary the probability threshold.
 * Precision-recall curve summarizes the model's skill for un-balanced data where positive examples are the real concern.
+
+## Week 13
+* Baysian approach to machine learning
+* MLE and MAP
+* Functional approximation
